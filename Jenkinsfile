@@ -62,12 +62,31 @@ pipeline {
 
             sh '''
             kubectl apply -f ./k8s/namespace.yml
-
-            kubectl apply -f ./k8s/service.yml
             kubectl apply -f ./k8s/deployment.yml
+            kubectl apply -f ./k8s/service.yml
 
             kubectl rollout status deployment/node-k8s-app -n node-k8s
-            '''
+
+            echo "Starting port forwarding..."
+
+            kubectl port-forward \
+                svc/node-k8s-app \
+                6767:6767 \
+                -n node-k8s \
+                > port-forward.log 2>&1 &
+
+            PORT_FORWARD_PID=$!
+
+            sleep 5
+
+            echo "Testing application..."
+
+            curl -f http://127.0.0.1:6767/health
+
+            echo "Application is working!"
+
+            kill $PORT_FORWARD_PID || true
+        '''
             }
         }
     }
