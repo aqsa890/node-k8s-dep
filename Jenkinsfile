@@ -16,7 +16,7 @@ pipeline {
             steps {
                 echo "Building the Node-app from Dockerfile"
 
-                sh "docker build -t node-k8s:v1.0.0 ."
+                sh "docker build -t elsa888/node-k8s:v1.0.0 ."
             }
         }
 
@@ -40,7 +40,7 @@ pipeline {
 
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
 
-                    sh "docker image tag node-k8:v1.0.0 ${env.dockerHubUser}/node-k8:v1.0.0"
+                    sh "docker image tag elsa888/node-k8:v1.0.0 ${env.dockerHubUser}/node-k8:v1.0.0"
 
                     sh "docker push ${env.dockerHubUser}/node-k8:v1.0.0"
                 }
