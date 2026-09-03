@@ -1,0 +1,17 @@
+{
+  "name": "k8s-cicd-app",
+  "version": "1.0.0",
+  "description": "Basic Node.js API with health check endpoint",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "healthcheck"
+  ],
+  "author": "",
+  "license": "ISC"
+}
