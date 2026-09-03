@@ -60,8 +60,14 @@ pipeline {
             steps {
                 echo "Deploying via Kubernetes Plugin..."
 
-                sh "kubectl apply -f ./k8s/"
-                sh "kubectl rollout status deployment/node-k8s-app -n node-k8s"
+            sh '''
+            kubectl apply -f ./k8s/namespace.yml
+
+            kubectl apply -f ./k8s/service.yml
+            kubectl apply -f ./k8s/deployment.yml
+
+            kubectl rollout status deployment/node-k8s-app -n node-k8s
+            '''
             }
         }
     }
