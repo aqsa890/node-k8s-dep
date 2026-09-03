@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Dependencies & Package manager logs
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker files
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Environment and Secrets (prevent baking secrets into images)
+.env*
+*.pem
+
+# Test & coverage files
+coverage
+test.js
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.swp
+*.swo
+
+# Documentation
+README.md
