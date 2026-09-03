@@ -23,6 +23,8 @@ pipeline {
         stage("Test") {
             steps {
                 echo "Testing"
+
+                sh "docker image inspect elsa888/node-k8s:v1.0.0"
             }
         }
 
@@ -33,16 +35,23 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: "dockerCreds",
-                        passwordVariable: "dockerHubPass",
-                        usernameVariable: "dockerHubUser" 
+                        usernameVariable: "dockerHubUser",
+                        passwordVariable: "dockerHubPass"
                     )
                 ]) {
 
-                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                    sh '''
+                        echo "$dockerHubPass" | docker login \
+                            -u "$dockerHubUser" \
+                            --password-stdin
 
-                    sh "docker image tag elsa888/node-k8:v1.0.0 ${env.dockerHubUser}/node-k8:v1.0.0"
+                        docker tag \
+                            elsa888/node-k8s:v1.0.0 \
+                            "$dockerHubUser/node-k8s:v1.0.0"
 
-                    sh "docker push ${env.dockerHubUser}/node-k8:v1.0.0"
+                        docker push \
+                            "$dockerHubUser/node-k8s:v1.0.0"
+                    '''
                 }
             }
         }
