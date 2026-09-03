@@ -63,6 +63,18 @@ pipeline {
             sh '''
             set -e
 
+            echo "Deploying Kubernetes resources..."
+
+            kubectl apply -f ./k8s/namespace.yml
+            kubectl apply -f ./k8s/service.yml
+            kubectl apply -f ./k8s/deployment.yml
+
+            echo "Waiting for deployment..."
+
+            kubectl rollout status \
+                deployment/node-k8s-app \
+                -n node-k8s
+
             echo "Starting port forwarding..."
 
             kubectl port-forward \
@@ -75,8 +87,6 @@ pipeline {
 
             echo "Port-forward PID: $PORT_FORWARD_PID"
 
-            echo "Waiting for port-forward to become ready..."
-
             for i in $(seq 1 30); do
 
                 if curl -s http://127.0.0.1:6767/health > /dev/null 2>&1; then
@@ -85,14 +95,12 @@ pipeline {
                 fi
 
                 if ! kill -0 $PORT_FORWARD_PID 2>/dev/null; then
-                    echo "Port-forward process died!"
-                    echo "===== port-forward.log ====="
+                    echo "Port-forward failed!"
                     cat port-forward.log
                     exit 1
                 fi
 
                 sleep 1
-
             done
 
             echo "Testing application..."
@@ -100,10 +108,9 @@ pipeline {
             curl -f http://127.0.0.1:6767/health
 
             echo ""
-            echo "Application health check successful!"
-
-            echo "===== Port Forward Log ====="
-            cat port-forward.log
+            echo "================================"
+            echo "Application is healthy!"
+            echo "================================"
 
             kill $PORT_FORWARD_PID || true
         '''
