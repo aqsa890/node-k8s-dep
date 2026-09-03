@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-k8s-app
+  namespace: node-k8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-k8s-app
+  template:
+    metadata:
+      labels:
+        app: node-k8s-app
+    spec:
+      containers:
+      - name: node-k8s-app
+        image: elsa888/node-k8s:v1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6767
+        resources:
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6767
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6767
+          initialDelaySeconds: 3
+          periodSeconds: 5
